@@ -1,0 +1,101 @@
+<!-- users.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Підключіть Bootstrap і jQuery -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Include toastr CSS and JavaScript files -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+</head>
+<body>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>User ID</th>
+                <th>User Name</th>
+                <th>User Last Name</th>
+                <th>Phone Number</th>
+                <th>Subscription</th>
+                <th>Bonus Awarded</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.user_id }}</td>
+                <td>{{ user.user_name }}</td>
+                <td>{{ user.user_last_name }}</td>
+                <td>{{ user.phone_number }}</td>
+                <td>{{ user.subscription }}</td>
+                <td>{{ user.bonus_awarded }}</td>
+                <td>
+                    <!-- Додайте кнопки для виконання дій через AJAX -->
+                    <button class="btn btn-primary" onclick="checkSubscription({{ user.user_id }})">Check Subscription</button>
+                    <button class="btn btn-success" onclick="sendMessage({{ user.user_id }})">Send Message</button>
+                    <textarea name="message" id="" cols="30" rows="1"></textarea>
+                    <button class="btn btn-danger" onclick="setMark({{ user.user_id }}, 'FRAUD')">FRAUD</button>
+                    <button class="btn btn-danger" onclick="setMark({{ user.user_id }}, 'RUSSIAN')">RUSSIAN(block)</button>
+                    <button class="btn btn-danger" onclick="setMark({{ user.user_id }}, 'SCAM')">SCAM</button>
+                    <button class="btn btn-warning" onclick="setMark({{ user.user_id }}, 'Influencer')">Influencer</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Підключіть бібліотеку Toastr -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
+
+    <!-- JavaScript-функції для AJAX-запитів -->
+    <script>
+        function checkSubscription(userId) {
+            // Реалізуйте AJAX-запит для перевірки підписки і виведення результату через Toastr
+            $.ajax({
+                url: '/check_subscription/' + userId + '/',
+                type: 'GET',
+                success: function (data) {
+                    toastr.success(data.message);
+                },
+                error: function () {
+                    toastr.error('Помилка при перевірці підписки.');
+                }
+            });
+        }
+
+        function sendMessage(userId) {
+            var textarea = $("textarea[name='message']");
+
+            // Реалізуйте AJAX-запит для відправлення повідомлення і виведення результату через Toastr
+            $.ajax({
+                url: '/send_message/' + userId + '/',
+                type: 'POST',
+                success: function (data) {
+                    toastr.success(data.message);
+
+                    textarea.val('');
+                },
+                error: function () {
+                    toastr.error('Помилка при відправленні повідомлення.');
+                }
+            });
+        }
+
+        function setMark(userId, mark) {
+            // Реалізуйте AJAX-запит для встановлення відмітки і виведення результату через Toastr
+            $.ajax({
+                url: '/set_mark/' + userId + '/' + mark + '/',
+                type: 'POST',
+                success: function (data) {
+                    toastr.success(data.message);
+                },
+                error: function () {
+                    toastr.error('Помилка при встановленні відмітки.');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

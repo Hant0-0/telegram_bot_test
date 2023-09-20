@@ -1,0 +1,19 @@
+# Віртуальне середовище
+myenv/
+
+# Файли та папки, які генеруються Django
+db.sqlite3
+/migrations/
+/__pycache__/
+*.pyc
+*.pyo
+
+# Файли журналів і тимчасові файли
+logs/
+tmp/
+
+# Секретні налаштування
+config_secret.py
+
+# Залежності Python
+__pycache__/
